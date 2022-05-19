@@ -40,6 +40,11 @@ public class GameManager : MonoBehaviour
         OnGameStarted?.Invoke();
     }
 
+    public void NextPosition()
+    {
+        _currentLevel.PlayerNextPoint();
+    }
+
     private void OnDestroy()
     {
         OnGameStarted.RemoveAllListeners();

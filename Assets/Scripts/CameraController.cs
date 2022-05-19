@@ -3,25 +3,25 @@ using Cinemachine;
 
 public class CameraController : MonoBehaviour
 {
-    private CinemachineVirtualCamera camera;
-    private Transform player;
+    private CinemachineVirtualCamera _camera;
+    private Transform _player;
 
     private void Awake()
     {
-        camera = GetComponent<CinemachineVirtualCamera>();
+        _camera = GetComponent<CinemachineVirtualCamera>();
     }
 
     public void Instance(Transform player)
     {
-        this.player = player;
+        _player = player;
 
-        camera.LookAt = player;
+        _camera.LookAt = player;
 
         GameManager.Main.OnGameStarted.AddListener(OnGameStarted);
     }
 
     private void OnGameStarted()
     {
-        camera.Follow = player;
+        _camera.Follow = _player;
     }
 }
