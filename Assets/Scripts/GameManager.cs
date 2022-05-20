@@ -5,13 +5,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Main;
 
-
-    [SerializeField] private CameraController camera;
+    [SerializeField] private CameraController cameraController;
     [SerializeField] private LevelsConfig levelsConfig;
     [SerializeField, Min(0)] private int levelIndex;
-    
+
     private Level _currentLevel;
     private PlayerController _playerController;
+    private HitManager _hitManager;
     
     public UnityEvent OnGameStarted;
 
@@ -24,14 +24,23 @@ public class GameManager : MonoBehaviour
         }
 
         Main = this;
+
+        _hitManager = GetComponent<HitManager>();
     }
 
     private void Start()
     {
         _currentLevel = Instantiate(levelsConfig.GetLevel(levelIndex));
-        _playerController = _currentLevel.Instance();
 
-        camera.Instance(_playerController.transform);
+
+        _playerController = _currentLevel.Initialize();
+        cameraController.Initialize(_playerController.transform);
+
+
+        _hitManager.Initialize(cameraController.Camera);
+        _hitManager.OnHit.AddListener(_playerController.Shoot);
+
+        StartGame();
     }
 
     [ContextMenu("Utils/StartGame")]
@@ -40,6 +49,7 @@ public class GameManager : MonoBehaviour
         OnGameStarted?.Invoke();
     }
 
+    [ContextMenu("Utils/NextPosition")]
     public void NextPosition()
     {
         _currentLevel.PlayerNextPoint();

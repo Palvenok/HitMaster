@@ -4,18 +4,33 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private GameObject arrowPrefab;
+    [SerializeField] private Transform arrowStartPosition;
+    [SerializeField] private float arrowLaunchForce;
+
+    private int _ammoCount;
     private NavMeshAgent _agent;
     private Health _health;
     private Animator _animator;
+    private AnimationEvents _events;
     private Vector3 _point;
+    private Vector3 _targetPoint;
     private Enemy _target;
     private TargetGroup _targetGroup;
+
+    public int Ammo
+    {
+        get { return _ammoCount; }
+        set { _ammoCount = value; }
+    }
 
     private void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
         _health = GetComponent<Health>();
         _animator = GetComponentInChildren<Animator>();
+        _events = GetComponentInChildren<AnimationEvents>();
+        _events.OnLaunch.AddListener(LaunchArrow);
     }
 
     public void MoveToPoint(Vector3 point)
@@ -33,6 +48,19 @@ public class PlayerController : MonoBehaviour
     public void LookAt(Vector3 target)
     {
         _agent.transform.LookAt(target);
+    }
+
+    public void Shoot(Vector3 point)
+    {
+        _animator.SetTrigger((int)AnimatorStates.Shoot);
+        _targetPoint = point;
+    }
+
+    private void LaunchArrow()
+    {
+        var arrow = Instantiate(arrowPrefab, arrowStartPosition).GetComponent<Arrow>();
+        arrow.Launch(arrowLaunchForce, _targetPoint);
+        Debug.Log("Launched");
     }
 
     private IEnumerator WaitMoveComplete()

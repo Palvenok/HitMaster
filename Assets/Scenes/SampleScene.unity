@@ -297,6 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7377ff0f54e8b5147a3fd2c115d99bff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _camera: {fileID: 963194227}
 --- !u!1 &584980786
 GameObject:
   m_ObjectHideFlags: 0
@@ -1043,6 +1044,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1722794937}
   - component: {fileID: 1722794936}
+  - component: {fileID: 1722794938}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1062,7 +1064,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccda1442492811741ad29cd8437dd7f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 320495649}
+  cameraController: {fileID: 320495649}
   levelsConfig: {fileID: 11400000, guid: ab149cabd26a675459008aaa73e85ae5, type: 2}
   levelIndex: 0
   OnGameStarted:
@@ -1082,6 +1084,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1722794938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1722794935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb4433f55497e8141ac56efed45d55bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mask:
+    serializedVersion: 2
+    m_Bits: 115
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1882627277
 GameObject:
   m_ObjectHideFlags: 0

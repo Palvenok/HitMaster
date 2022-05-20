@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Level : MonoBehaviour
 {
+    [SerializeField] private int ammoCount;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform startPoint;
     [SerializeField] private Transform finishPoint;
@@ -14,7 +15,7 @@ public class Level : MonoBehaviour
     private PlayerController _playerController;
     private int _currentPointNum;
 
-    public PlayerController Instance()
+    public PlayerController Initialize()
     {
         _playerController = Instantiate(playerPrefab,
                                        startPoint.position,

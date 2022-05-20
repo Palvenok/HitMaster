@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(Health))]
 public class Enemy : MonoBehaviour
 {
     private Health _health;
-
-    public UnityEvent OnDeath;
 
     private void Awake()
     {
@@ -16,12 +15,7 @@ public class Enemy : MonoBehaviour
 
     private void OnEnemyDeath()
     {
-        OnDeath?.Invoke();
+        Destroy(gameObject);
         ///TODO: death animations/ragdol
-    }
-
-    private void OnDestroy()
-    {
-        OnDeath.RemoveAllListeners();
     }
 }
