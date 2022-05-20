@@ -47,7 +47,7 @@ CapsuleCollider:
   m_Radius: 0.02
   m_Height: 0.28
   m_Direction: 2
-  m_Center: {x: 0.00059253734, y: 0.0002553938, z: -0.14871566}
+  m_Center: {x: 0, y: 0, z: -0.067}
 --- !u!114 &2391354868004210946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,6 +60,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89ef75e870050af40a2288dc22cda8ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!54 &6618402797653940109
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -72,9 +75,9 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!1001 &2253419192646207059
 PrefabInstance:

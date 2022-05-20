@@ -1,16 +1,19 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private GameObject arrowPrefab;
     [SerializeField] private Transform arrowStartPosition;
     [SerializeField] private float arrowLaunchForce;
+    
 
     private int _ammoCount;
+    private int _arrowsLimit;
     private NavMeshAgent _agent;
-    private Health _health;
     private Animator _animator;
     private AnimationEvents _events;
     private Vector3 _point;
@@ -18,16 +21,25 @@ public class PlayerController : MonoBehaviour
     private Enemy _target;
     private TargetGroup _targetGroup;
 
+    private List<Arrow> _arrowList = new List<Arrow>();
+
+    public UnityEvent<string> OnHit;
+    public UnityEvent<int> OnShoot;
+
     public int Ammo
     {
         get { return _ammoCount; }
         set { _ammoCount = value; }
     }
 
+    public int ArrowsLimit
+    {
+        set { _arrowsLimit = value; }
+    }
+
     private void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
-        _health = GetComponent<Health>();
         _animator = GetComponentInChildren<Animator>();
         _events = GetComponentInChildren<AnimationEvents>();
         _events.OnLaunch.AddListener(LaunchArrow);
@@ -52,15 +64,45 @@ public class PlayerController : MonoBehaviour
 
     public void Shoot(Vector3 point)
     {
+        if(_ammoCount <= 0) return;
+
+        _ammoCount--;
+        OnShoot?.Invoke(_ammoCount);
         _animator.SetTrigger((int)AnimatorStates.Shoot);
         _targetPoint = point;
     }
 
     private void LaunchArrow()
     {
-        var arrow = Instantiate(arrowPrefab, arrowStartPosition).GetComponent<Arrow>();
+        Arrow arrow;
+
+        if (_arrowList.Count < _arrowsLimit)
+        {
+            arrow = Instantiate(arrowPrefab, arrowStartPosition.position, Quaternion.identity).GetComponent<Arrow>();
+        }
+        else
+        {
+            arrow = _arrowList[0];
+            arrow.transform.position = arrowStartPosition.position;
+            _arrowList.RemoveAt(0);
+        }
         arrow.Launch(arrowLaunchForce, _targetPoint);
-        Debug.Log("Launched");
+        arrow.OnHitStart.AddListener(() => { OnHit?.Invoke("Start"); });
+        arrow.OnHitEnd.AddListener(() => { OnHit?.Invoke("Finish"); });
+        arrow.OnHit.AddListener(OnArrowHit);
+        arrow.OnDestroed.AddListener((Arrow a) => { _arrowList.Remove(a); });
+        _arrowList.Add(arrow);
+    }
+
+    private void OnArrowHit(Health health, Arrow arrow)
+    {
+        if (health == null) return;
+        if (health.Value <= 0)
+        {
+            _target = _targetGroup.GetTarget();
+            if (_target == null)  return; 
+            LookAt(_target.transform.position);
+        }
     }
 
     private IEnumerator WaitMoveComplete()
@@ -73,10 +115,17 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-
         _animator.SetTrigger((int)AnimatorStates.Idle);
-        _target = _targetGroup.GetTarget();
 
+        if (_targetGroup == null) yield break;
+        _target = _targetGroup.GetTarget();
         LookAt(_target.transform.position);
+        
+    }
+
+    private void OnDestroy()
+    {
+        OnHit.RemoveAllListeners();
+        OnShoot.RemoveAllListeners();
     }
 }

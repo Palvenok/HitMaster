@@ -7,6 +7,7 @@ public class Health : MonoBehaviour
     [SerializeField] private float maxHealth;
 
     public float Value => health;
+    public float MaxValue => maxHealth;
 
     public UnityEvent OnDeath;
 

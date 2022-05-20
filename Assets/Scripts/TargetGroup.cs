@@ -16,8 +16,23 @@ public class TargetGroup : MonoBehaviour
             OnTargetGroupClear?.Invoke();
             return null;
         }
-        var target = enemiesInGroup[enemiesInGroup.Count - 1];
-        enemiesInGroup.RemoveAt(enemiesInGroup.Count - 1);
+        var target = enemiesInGroup[Random.Range(0, enemiesInGroup.Count)];
         return target;
+    }
+
+    public void RemoveEnemy(Enemy enemy)
+    {
+        if (enemiesInGroup.Contains(enemy))
+            enemiesInGroup.Remove(enemy);
+
+        if (enemiesInGroup.Count == 0)
+        {
+            OnTargetGroupClear?.Invoke();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        OnTargetGroupClear.RemoveAllListeners();
     }
 }

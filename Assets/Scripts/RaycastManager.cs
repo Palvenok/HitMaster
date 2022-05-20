@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class HitManager : MonoBehaviour
+public class RaycastManager : MonoBehaviour
 {
     [SerializeField] private LayerMask mask;
 
@@ -31,7 +31,7 @@ public class HitManager : MonoBehaviour
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             Physics.Raycast(ray, out hit, 100f, mask);
-            OnHit?.Invoke(hit.point);            
+            OnHit?.Invoke(hit.point);
         }
     }
 
