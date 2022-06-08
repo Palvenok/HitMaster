@@ -10,8 +10,6 @@ public class Level : MonoBehaviour
     [SerializeField] private GameObject startTarget;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform startPoint;
-    [SerializeField] private Transform finishPoint;
-    [SerializeField] private Transform[] wayPoints;
     [SerializeField] private TargetGroup[] targetGroups;
 
 
@@ -40,7 +38,7 @@ public class Level : MonoBehaviour
         if (value.Equals("Start"))
         {
             PlayerNextPoint();
-            Destroy(startTarget.gameObject);
+            startTarget.GetComponent<Rigidbody>().isKinematic = false;
         }
 
         if (value.Equals("Finish"))
@@ -52,12 +50,15 @@ public class Level : MonoBehaviour
     [ContextMenu("Utils/PlayerNextPoint")]
     public void PlayerNextPoint()
     {
-        if (_currentPointNum >= wayPoints.Length)
+        if (_currentPointNum >= targetGroups.Length)
         {
             return;
         }
-
-        _playerController.MoveToPoint(wayPoints[_currentPointNum].position);
+        while ( targetGroups[_currentPointNum].TargetsCount == 0)
+        {
+            _currentPointNum++;
+        }
+        _playerController.MoveToPoint(targetGroups[_currentPointNum].ShootPoint.position);
         _playerController.SetTargetGroup(targetGroups[_currentPointNum]);
         _currentPointNum++;
     }

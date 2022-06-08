@@ -32,7 +32,6 @@ public class Health : MonoBehaviour
     private void Death()
     {
         OnDeath?.Invoke();
-        Destroy(gameObject);
     }
 
     private void OnDestroy()

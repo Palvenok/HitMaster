@@ -3,32 +3,44 @@ using UnityEngine.Events;
 
 public class Arrow : MonoBehaviour
 {
-    private Rigidbody _rb;
+    [SerializeField] private float headShotDamage = 50;
+    [SerializeField] private float normalDamage = 8;
 
-    public UnityEvent<Health, Arrow> OnHit;
-    public UnityEvent OnHitStart;
-    public UnityEvent OnHitEnd;
-    public UnityEvent<Arrow> OnDestroed;
+    private Rigidbody _rb;
+    private Collider _collider;
+
+    [HideInInspector] public UnityEvent<Health, Arrow> OnHit;
+    [HideInInspector] public UnityEvent OnHitStart;
+    [HideInInspector] public UnityEvent OnHitEnd;
+    [HideInInspector] public UnityEvent<Arrow> OnDestroed;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
     }
 
     public void Launch(float force, Vector3 targetPoint)
     {
+        _collider.enabled = true;
+        _rb.isKinematic = false;
+        transform.parent = null;
         transform.LookAt(targetPoint);
         _rb.AddForce(transform.forward * force);
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        var pos = transform.position;
         if (other.CompareTag("Player")) return;
         if (other.CompareTag("Start")) OnHitStart?.Invoke();
         if (other.CompareTag("Finish")) OnHitEnd?.Invoke();
 
+        _collider.enabled = false;
+        _rb.isKinematic = true;
         _rb.velocity = Vector3.zero;
         transform.parent = other.transform;
+        transform.position = pos;
 
         var trigger = other.GetComponent<IBody>();
         var healh = other.GetComponentInParent<Health>();
@@ -39,16 +51,16 @@ public class Arrow : MonoBehaviour
             switch (trigger.Type)
             {
                 case TriggerType.Head:
-                    damage = 50;
+                    damage = headShotDamage;
                     break;
                 case TriggerType.Body:
-                    damage = 8;
+                    damage = normalDamage;
                     break;
                 case TriggerType.Arm:
-                    damage = 4;
+                    damage = normalDamage * .4f;
                     break;
                 case TriggerType.Leg:
-                    damage = 4;
+                    damage = normalDamage * .4f;
                     break;
             }
 

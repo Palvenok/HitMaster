@@ -6,13 +6,16 @@ using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
+    [HideInInspector] public UnityEvent<string> OnHit;
+    [HideInInspector] public UnityEvent<int> OnShoot;
+
     [SerializeField] private GameObject arrowPrefab;
     [SerializeField] private Transform arrowStartPosition;
     [SerializeField] private float arrowLaunchForce;
     
-
     private int _ammoCount;
     private int _arrowsLimit;
+    private bool _isCanShoot;
     private NavMeshAgent _agent;
     private Animator _animator;
     private AnimationEvents _events;
@@ -20,11 +23,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 _targetPoint;
     private Enemy _target;
     private TargetGroup _targetGroup;
-
     private List<Arrow> _arrowList = new List<Arrow>();
-
-    public UnityEvent<string> OnHit;
-    public UnityEvent<int> OnShoot;
 
     public int Ammo
     {
@@ -43,12 +42,15 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
         _events = GetComponentInChildren<AnimationEvents>();
         _events.OnLaunch.AddListener(LaunchArrow);
+
+        _isCanShoot = true;
     }
 
     public void MoveToPoint(Vector3 point)
     {
         _point = point;
         _agent.SetDestination(point);
+        _isCanShoot = false;
         StartCoroutine(WaitMoveComplete());
     }
 
@@ -65,6 +67,7 @@ public class PlayerController : MonoBehaviour
     public void Shoot(Vector3 point)
     {
         if(_ammoCount <= 0) return;
+        if (!_isCanShoot) return;
 
         _ammoCount--;
         OnShoot?.Invoke(_ammoCount);
@@ -119,8 +122,9 @@ public class PlayerController : MonoBehaviour
 
         if (_targetGroup == null) yield break;
         _target = _targetGroup.GetTarget();
+        _targetGroup.MoveEnemy();
         LookAt(_target.transform.position);
-        
+        _isCanShoot = true;
     }
 
     private void OnDestroy()
