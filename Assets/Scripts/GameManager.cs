@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
 
         _currentLevel.OnTargetsOnLevelUpdate.AddListener(uiController.UpdateLevelProgressBar);
         uiController.UpdateLevelIndex((_currentLevel.Index + 1).ToString());
+        uiController.UpdateLevelProgressBar(1, 1);
 
         _hitManager.Initialize(cameraController.Camera);
         _hitManager.OnHit.AddListener(_playerController.Shoot);
@@ -61,22 +62,36 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        uiController.ShowPanel(UiPanel.GamePanel);
+        _playerController.Health.OnDeath.AddListener(OnGameEnd);
         OnGameStarted?.Invoke();
         UpdateCounter(_playerController.Ammo);
     }
 
     private void OnLevelComplete()
     {
+        uiController.ShowPanel(UiPanel.WinPanel);
+    }
+    private void OnGameEnd()
+    {
+        uiController.ShowPanel(UiPanel.FailPanel);
+    }
+
+    public void RestartLevel()
+    {
         _currentLevel.Destroy();
-        _levelIndex++;
-        if(_levelIndex >= levelsConfig.Count) _levelIndex = 0;
+        if (_levelIndex >= levelsConfig.Count) _levelIndex = 0;
         LevelInit(levelsConfig.GetLevel(_levelIndex), _levelIndex);
     }
 
-    private void OnGameEnd()
+    public void NextLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        _currentLevel.Destroy();
+        _levelIndex++;
+        if (_levelIndex >= levelsConfig.Count) _levelIndex = 0;
+        LevelInit(levelsConfig.GetLevel(_levelIndex), _levelIndex);
     }
+
 
     private void UpdateCounter(int count)
     {

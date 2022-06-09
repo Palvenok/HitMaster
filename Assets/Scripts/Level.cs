@@ -16,7 +16,6 @@ public class Level : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Transform startPoint;
     [SerializeField] private Transform finishPoint;
-    [SerializeField, Min(0)] private float finishDelay;
     [SerializeField] private TargetGroup[] targetGroups;
 
     private PlayerController _playerController;
@@ -76,17 +75,7 @@ public class Level : MonoBehaviour
     {
         _playerController.MoveToPoint(finishPoint.position);
         _playerController.SetTargetGroup(null);
-        StartCoroutine(FinishTimer());
-    }
 
-    private IEnumerator FinishTimer()
-    {
-        var timer = finishDelay;
-        while (timer > 0)
-        {
-            timer -= Time.deltaTime;
-            yield return null;
-        }
         OnLevelComplete?.Invoke();
     }
 

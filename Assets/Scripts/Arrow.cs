@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class Arrow : MonoBehaviour
@@ -32,16 +33,21 @@ public class Arrow : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var pos = transform.position - transform.forward * .2f;
         if (other.CompareTag("Player")) return;
-        if (other.CompareTag("Start")) OnHitStart?.Invoke();
 
-        Instantiate(hitParticleSystem, transform);
+        var pos = transform.position - transform.forward * .2f;
+        hitParticleSystem.Play();
         _collider.enabled = false;
         _rb.isKinematic = true;
         _rb.velocity = Vector3.zero;
         transform.parent = other.transform;
         transform.position = pos;
+
+        if (other.CompareTag("Start")) 
+        {
+            OnHitStart?.Invoke();
+            return;
+        }
 
         var trigger = other.GetComponent<IBody>();
         var healh = other.GetComponentInParent<Health>();

@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private int _ammoCount;
     private int _arrowsLimit;
     private bool _isCanShoot;
+    private bool _isCanMove;
     private NavMeshAgent _agent;
     private Animator _animator;
     private AnimationEvents _events;
@@ -23,7 +24,10 @@ public class PlayerController : MonoBehaviour
     private Vector3 _targetPoint;
     private Enemy _target;
     private TargetGroup _targetGroup;
+    private Health _health;
     private List<Arrow> _arrowList = new List<Arrow>();
+
+    public Health Health => _health;
 
     public int Ammo
     {
@@ -36,18 +40,31 @@ public class PlayerController : MonoBehaviour
         set { _arrowsLimit = value; }
     }
 
-    private void Start()
+
+
+    private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        _health = GetComponent<Health>();
         _animator = GetComponentInChildren<Animator>();
         _events = GetComponentInChildren<AnimationEvents>();
         _events.OnLaunch.AddListener(LaunchArrow);
 
         _isCanShoot = true;
+        _isCanMove = true;
+
+        _health.OnDeath.AddListener(() => 
+        {
+            _isCanMove = false;
+            _isCanShoot = false;
+            _agent.isStopped = true;
+        });
     }
 
     public void MoveToPoint(Vector3 point)
     {
+        if (!_isCanMove) return;
+
         _point = point;
         _agent.SetDestination(point);
         _isCanShoot = false;
@@ -66,8 +83,8 @@ public class PlayerController : MonoBehaviour
 
     public void Shoot(Vector3 point)
     {
-        if(_ammoCount <= 0) return;
         if (!_isCanShoot) return;
+        if(_ammoCount <= 0) return;
 
         _ammoCount--;
         OnShoot?.Invoke(_ammoCount);
