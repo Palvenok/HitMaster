@@ -5,6 +5,8 @@ public class LevelsConfig : ScriptableObject
 {
     [SerializeField] private Level[] _levels;
 
+    public int Count => _levels.Length;
+
     public Level GetLevel(int index)
     {
         if (index < 0) index = 0;

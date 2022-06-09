@@ -5,6 +5,7 @@ using UnityEngine.Events;
 public class TargetGroup : MonoBehaviour
 {
     [HideInInspector] public UnityEvent OnTargetGroupClear;
+    [HideInInspector] public UnityEvent OnTargetGroupUpdate;
     
     [SerializeField] private List<Enemy> enemiesInGroup;
     [SerializeField] private Transform shootPoint;
@@ -20,6 +21,7 @@ public class TargetGroup : MonoBehaviour
             return null;
         }
         var target = enemiesInGroup[Random.Range(0, enemiesInGroup.Count)];
+
         return target;
     }
 
@@ -36,8 +38,11 @@ public class TargetGroup : MonoBehaviour
         if (enemiesInGroup.Contains(enemy))
             enemiesInGroup.Remove(enemy);
 
+        OnTargetGroupUpdate?.Invoke();
+
         if (enemiesInGroup.Count == 0)
         {
+            OnTargetGroupUpdate.RemoveAllListeners();
             OnTargetGroupClear?.Invoke();
         }
     }
@@ -45,5 +50,6 @@ public class TargetGroup : MonoBehaviour
     private void OnDestroy()
     {
         OnTargetGroupClear.RemoveAllListeners();
+        OnTargetGroupUpdate.RemoveAllListeners();
     }
 }

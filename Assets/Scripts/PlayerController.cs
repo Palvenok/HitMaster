@@ -91,7 +91,6 @@ public class PlayerController : MonoBehaviour
         }
         arrow.Launch(arrowLaunchForce, _targetPoint);
         arrow.OnHitStart.AddListener(() => { OnHit?.Invoke("Start"); });
-        arrow.OnHitEnd.AddListener(() => { OnHit?.Invoke("Finish"); });
         arrow.OnHit.AddListener(OnArrowHit);
         arrow.OnDestroed.AddListener((Arrow a) => { _arrowList.Remove(a); });
         _arrowList.Add(arrow);
@@ -102,7 +101,7 @@ public class PlayerController : MonoBehaviour
         if (health == null) return;
         if (health.Value <= 0)
         {
-            _target = _targetGroup.GetTarget();
+            _target = _targetGroup?.GetTarget();
             if (_target == null)  return; 
             LookAt(_target.transform.position);
         }

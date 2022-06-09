@@ -60,6 +60,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89ef75e870050af40a2288dc22cda8ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  headShotDamage: 50
+  normalDamage: 8
+  hitParticleSystem: {fileID: 906009203600433370, guid: 2af96f392c33419479ce77374cb7055b,
+    type: 3}
   OnHit:
     m_PersistentCalls:
       m_Calls: []

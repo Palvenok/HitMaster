@@ -5,13 +5,14 @@ public class Arrow : MonoBehaviour
 {
     [SerializeField] private float headShotDamage = 50;
     [SerializeField] private float normalDamage = 8;
+    [Space]
+    [SerializeField] private ParticleSystem hitParticleSystem;
 
     private Rigidbody _rb;
     private Collider _collider;
 
     [HideInInspector] public UnityEvent<Health, Arrow> OnHit;
     [HideInInspector] public UnityEvent OnHitStart;
-    [HideInInspector] public UnityEvent OnHitEnd;
     [HideInInspector] public UnityEvent<Arrow> OnDestroed;
 
     private void Awake()
@@ -31,11 +32,11 @@ public class Arrow : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var pos = transform.position;
+        var pos = transform.position - transform.forward * .2f;
         if (other.CompareTag("Player")) return;
         if (other.CompareTag("Start")) OnHitStart?.Invoke();
-        if (other.CompareTag("Finish")) OnHitEnd?.Invoke();
 
+        Instantiate(hitParticleSystem, transform);
         _collider.enabled = false;
         _rb.isKinematic = true;
         _rb.velocity = Vector3.zero;
@@ -73,7 +74,6 @@ public class Arrow : MonoBehaviour
         OnDestroed?.Invoke(this);
         OnDestroed.RemoveAllListeners();
         OnHitStart.RemoveAllListeners();
-        OnHitEnd.RemoveAllListeners();
         OnHit.RemoveAllListeners();
     }
 }
